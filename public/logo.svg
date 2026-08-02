@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Background Glow -->
+    <radialGradient id="bgGlow" cx="50%" cy="45%" r="50%" fx="50%" fy="45%">
+      <stop offset="0%" stop-color="#3b0764" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#090514" stop-opacity="1" />
+    </radialGradient>
+
+    <!-- Purple Gradient for Buddy & Figure -->
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e9d5ff" />
+      <stop offset="40%" stop-color="#c084fc" />
+      <stop offset="100%" stop-color="#7e22ce" />
+    </linearGradient>
+
+    <!-- White Glow for R -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Dark Purple Canvas Background -->
+  <rect width="500" height="500" rx="40" fill="url(#bgGlow)" />
+
+  <!-- Sparkle Stars Top Left -->
+  <!-- Big Star -->
+  <path d="M180 130 Q180 150 160 150 Q180 150 180 170 Q180 150 200 150 Q180 150 180 130 Z" fill="#e9d5ff" filter="url(#glow)" />
+  <!-- Small Star 1 -->
+  <path d="M152 170 Q152 178 144 178 Q152 178 152 186 Q152 178 160 178 Q152 178 152 170 Z" fill="#d8b4fe" />
+  <!-- Small Star 2 -->
+  <path d="M172 195 Q172 201 166 201 Q172 201 172 207 Q172 201 178 201 Q172 201 172 195 Z" fill="#c084fc" />
+
+  <!-- Book Pages / Wings on Left -->
+  <g fill="none" stroke="#f5f3ff" stroke-linecap="round">
+    <path d="M148 220 Q185 242 225 285" stroke-width="12" fill="#ffffff" opacity="0.95" />
+    <path d="M140 248 Q180 262 225 298" stroke-width="10" fill="#e9d5ff" opacity="0.85" />
+    <path d="M146 276 Q185 285 225 310" stroke-width="8" fill="#c084fc" opacity="0.75" />
+  </g>
+
+  <!-- Rising Figure in Center -->
+  <!-- Head -->
+  <circle cx="238" cy="188" r="15" fill="#ffffff" filter="url(#glow)" />
+  <!-- Body / Outstretched Arms -->
+  <path d="M192 180 Q238 210 292 180 Q252 240 290 315 Q245 318 215 270 Q205 235 192 180 Z" fill="url(#purpleGrad)" />
+
+  <!-- Stylized Large R Sweep -->
+  <path d="M195 118 L305 118 Q350 118 350 178 Q350 238 285 238 L260 238 L355 318 Q320 318 280 268 L260 238 L260 152 L300 152 Q318 152 318 178 Q318 204 300 204 L260 204 Z" fill="#ffffff" filter="url(#glow)" />
+
+  <!-- Brand Typography -->
+  <!-- Rise -->
+  <text x="75" y="380" font-family="'Plus Jakarta Sans', 'Inter', sans-serif" font-weight="900" font-size="52" fill="#ffffff" letter-spacing="-1">Rise</text>
+  <!-- Buddy -->
+  <text x="220" y="380" font-family="'Plus Jakarta Sans', 'Inter', sans-serif" font-weight="900" font-size="52" fill="url(#purpleGrad)" letter-spacing="-1">Buddy</text>
+
+  <!-- Subtitle Line -->
+  <line x1="65" y1="410" x2="435" y2="410" stroke="#7e22ce" stroke-width="1.5" opacity="0.6" />
+  <text x="250" y="414" font-family="'Plus Jakarta Sans', 'Inter', sans-serif" font-weight="800" font-size="11" fill="#d8b4fe" text-anchor="middle" letter-spacing="2">AI FRIEND  •  STUDY PLANNER  •  MOTIVATION COACH</text>
+
+  <!-- Heart Book Accent below -->
+  <path d="M242 438 C242 432 246 428 250 432 C254 428 258 432 258 438 C258 443 250 448 250 448 C250 448 242 443 242 438 Z" fill="#c084fc" />
+  <path d="M230 448 Q242 444 250 449 Q258 444 270 448" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" />
+</svg>

@@ -1,0 +1,6 @@
+{
+  "name": "RiseBuddy",
+  "description": "Your AI Friend, Study Planner & Motivation Coach - stay motivated, organised, and emotionally supported every day.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
