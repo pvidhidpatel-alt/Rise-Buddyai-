@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { GoogleAuthModal } from './components/GoogleAuthModal';
 import { PrimeModal } from './components/PrimeModal';
@@ -26,37 +26,71 @@ export default function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isPrimeModalOpen, setIsPrimeModalOpen] = useState(false);
 
-  // User Profile State
-  const [user, setUser] = useState<UserProfile>({
-    id: 'p.vidhidpatel@gmail.com',
-    name: 'Vidhi Patel',
-    email: 'p.vidhidpatel@gmail.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
-    plan: 'free',
-    remainingFreeChats: 5,
-    primeExpiryDaysRemaining: 3, // Shows renewal alert when prime
-    memoryEnabled: true,
-    xp: 450,
-    streakDays: 5,
-    examDetails: {
-      examName: 'Final Board Exams 2026',
-      examDate: '2026-08-20',
-      subjects: ['Physics', 'Chemistry', 'Mathematics', 'English'],
-      weakSubjects: ['Physics', 'Mathematics'],
-      boringSubjects: ['Chemistry'],
-      preferredTimeslot: 'Morning',
-    },
+  // User Profile State (Persisted in Local Storage)
+  const [user, setUser] = useState<UserProfile>(() => {
+    try {
+      const savedUser = localStorage.getItem('rise_buddy_user');
+      if (savedUser) return JSON.parse(savedUser);
+    } catch (e) {
+      console.error('Failed to load user from localStorage:', e);
+    }
+    return {
+      id: '',
+      name: 'Guest Student',
+      email: '',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      plan: 'free',
+      remainingFreeChats: 5,
+      primeExpiryDaysRemaining: 0,
+      memoryEnabled: true,
+      xp: 0,
+      streakDays: 1,
+      examDetails: {
+        examName: 'Upcoming Exams',
+        examDate: '2026-08-30',
+        subjects: ['Mathematics', 'Science', 'English'],
+        weakSubjects: ['Mathematics'],
+        boringSubjects: [],
+        preferredTimeslot: 'Morning',
+      },
+    };
   });
 
+  // Persist User Changes to LocalStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('rise_buddy_user', JSON.stringify(user));
+    } catch (e) {
+      console.error('Failed to save user to localStorage:', e);
+    }
+  }, [user]);
+
   // Chat State
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: 'init-1',
-      sender: 'ai',
-      text: "Hey Vidhi! 🌟 I'm RiseBuddy, your AI Friend, Study Planner & Motivation Coach. How are you feeling about your studies today?",
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    try {
+      const savedMsgs = localStorage.getItem('rise_buddy_messages');
+      if (savedMsgs) return JSON.parse(savedMsgs);
+    } catch (e) {
+      console.error('Failed to load messages from localStorage:', e);
+    }
+    return [
+      {
+        id: 'init-1',
+        sender: 'ai',
+        text: "Hey! 🌟 I'm RiseBuddy, your AI Friend, Study Planner & Motivation Coach. How are you feeling about your studies today?",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      },
+    ];
+  });
+
+  // Persist Messages Changes to LocalStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('rise_buddy_messages', JSON.stringify(messages));
+    } catch (e) {
+      console.error('Failed to save messages to localStorage:', e);
+    }
+  }, [messages]);
   const [isChatLoading, setIsChatLoading] = useState(false);
 
   // Timetable State
