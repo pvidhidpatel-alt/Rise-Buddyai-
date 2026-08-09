@@ -30,6 +30,11 @@ export const AIRevisionNotes: React.FC<AIRevisionNotesProps> = ({ user, onAddXP 
 
   const [currentNote, setCurrentNote] = useState<RevisionNote | null>(null);
 
+  // ChatGPT Q&A Follow-up State
+  const [askInput, setAskInput] = useState('');
+  const [isAsking, setIsAsking] = useState(false);
+  const [chatQuestions, setChatQuestions] = useState<Array<{ question: string; answer: string }>>([]);
+
   // Sample Revision Cheatsheets
   const sampleNotes: RevisionNote[] = [
     {
@@ -417,6 +422,90 @@ export const AIRevisionNotes: React.FC<AIRevisionNotesProps> = ({ user, onAddXP 
               </div>
             </div>
           )}
+
+          {/* ChatGPT-Style Follow-Up Q&A Assistant */}
+          <div className="p-6 rounded-3xl bg-slate-900 text-white space-y-4 shadow-xl border border-slate-800">
+            <div className="flex items-center gap-2 text-blue-400">
+              <Sparkles className="w-5 h-5 animate-pulse" />
+              <h3 className="text-sm font-black uppercase tracking-wider">
+                Ask ChatGPT / AI Assistant About These Notes
+              </h3>
+            </div>
+            <p className="text-xs text-slate-300">
+              Need a deeper explanation, real-world example, or practice problem for {currentNote.title}? Ask anything!
+            </p>
+
+            {chatQuestions.length > 0 && (
+              <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
+                {chatQuestions.map((q, idx) => (
+                  <div key={idx} className="space-y-1.5 text-xs">
+                    <div className="font-bold text-blue-300 bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60">
+                      🧑‍🎓 Question: {q.question}
+                    </div>
+                    <div className="font-medium text-slate-100 bg-blue-950/60 p-3 rounded-xl border border-blue-900/40 leading-relaxed whitespace-pre-line">
+                      🤖 AI Assistant: {q.answer}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!askInput.trim() || isAsking) return;
+                const questionText = askInput.trim();
+                setAskInput('');
+                setIsAsking(true);
+
+                try {
+                  const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      messages: [
+                        {
+                          sender: 'user',
+                          text: `Context Notes: ${currentNote.title} (${currentNote.subject}). Summary: ${currentNote.summary}. Question: ${questionText}`,
+                        },
+                      ],
+                      userProfile: user,
+                    }),
+                  });
+                  const data = await res.json();
+                  const answer = data.reply || `Here is a clear breakdown for "${questionText}": Focus on the core formula and apply it step-by-step with standard SI units!`;
+                  setChatQuestions((prev) => [...prev, { question: questionText, answer }]);
+                } catch (err) {
+                  setChatQuestions((prev) => [
+                    ...prev,
+                    {
+                      question: questionText,
+                      answer: `Great question on ${currentNote.title}! Key takeaway: Break down the concept into basic principles and test yourself with 1 sample problem.`,
+                    },
+                  ]);
+                } finally {
+                  setIsAsking(false);
+                }
+              }}
+              className="flex gap-2"
+            >
+              <input
+                type="text"
+                placeholder="Ask AI e.g. 'Explain formula 1 with an easy example' or 'Give me a practice problem'..."
+                value={askInput}
+                onChange={(e) => setAskInput(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 font-medium"
+              />
+              <button
+                type="submit"
+                disabled={isAsking || !askInput.trim()}
+                className="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-all disabled:opacity-50 shrink-0"
+              >
+                {isAsking ? <Sparkles className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                <span>Ask AI</span>
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>

@@ -255,44 +255,62 @@ function getFallbackFlashcards(body: any) {
 
 function getFallbackNotes(body: any) {
   const { topic = "Core Chapter", subject = "General", rawNotes } = body;
-  const nTopic = topic || subject;
+  const nTopic = topic || subject || "Revision Notes";
+
+  // If raw notes are provided, split them into clean bullet points
+  let extractedPoints: string[] = [];
+  if (rawNotes && typeof rawNotes === "string" && rawNotes.trim().length > 0) {
+    extractedPoints = rawNotes
+      .split(/\n|\./)
+      .map((line: string) => line.trim())
+      .filter((line: string) => line.length > 5);
+  }
+
+  const conceptSection1Points = extractedPoints.length >= 2
+    ? extractedPoints.slice(0, Math.ceil(extractedPoints.length / 2))
+    : [
+        `Core Definition: ${nTopic} forms the fundamental basis of ${subject}, establishing predictable mathematical and conceptual relations.`,
+        `Primary Governing Principle: Always identify given constraints, target variables, and initial boundary conditions.`,
+        `Key takeaway: Distinguish between instantaneous rates and cumulative system quantities.`
+      ];
+
+  const conceptSection2Points = extractedPoints.length >= 4
+    ? extractedPoints.slice(Math.ceil(extractedPoints.length / 2))
+    : [
+        `High-Frequency Exam Insight: Written explanations must explicitly connect theoretical steps to final numeric units.`,
+        `Problem-Solving Sequence: List known values → Write governing formula → Substitute SI metric units → Double-check sign conventions.`,
+        `Memory Anchor: Map abstract concepts in ${nTopic} to real-world physical or computational models.`
+      ];
+
   return {
     id: "note-" + Date.now(),
-    title: `High-Yield Cheatsheet: ${nTopic}`,
-    subject: subject,
-    summary: `Concise 5-minute exam revision sheet for ${nTopic}. Focuses on essential concepts, key formulas, and sneaky exam traps.`,
+    title: `ChatGPT-Style High-Yield Notes: ${nTopic}`,
+    subject: subject || "General",
+    summary: `Comprehensive 5-minute exam revision cheatsheet for ${nTopic}. Synthesizes core principles, critical formulas, and high-yield exam traps for rapid revision.`,
     keyConcepts: [
       {
-        title: "1. Core Principles & Fundamentals",
-        points: [
-          `All problems in ${nTopic} rely on basic conservation principles and standard equations.`,
-          "Always state given values with explicit SI units before starting calculations.",
-          "Key takeaway: Distinguish clearly between rates of change and total accumulated values."
-        ]
+        title: `1. Core Principles & Fundamentals of ${nTopic}`,
+        points: conceptSection1Points
       },
       {
-        title: "2. Exam Strategy & High-Score Insights",
-        points: [
-          "Step-by-step formula writing earns partial marks even if arithmetic has a minor error.",
-          "Pay close attention to initial conditions (t=0, rest position, standard temperature/pressure).",
-          "Raw notes context: " + (rawNotes || nTopic)
-        ]
+        title: `2. Detailed Problem-Solving & Strategic Insights`,
+        points: conceptSection2Points
       }
     ],
     keyFormulasOrDefinitions: [
-      `Definition: ${nTopic} describes the state or behavior of a system under specified conditions.`,
-      "Primary Formula: Result = (Input Factor × Rate Coefficient) / System Impedance",
-      "Standard Units: SI Metric System (Joules, Watts, Meters, Seconds, Volts, Pascals)"
+      `Definition: ${nTopic} - Primary rule governing system behavior under defined environmental parameters.`,
+      `Standard Expression: Output = (Primary Input × Growth Rate) / System Impedance`,
+      `Required Units: SI Standard (Meters, Seconds, Joules, Volts, Pascals, Kilograms)`
     ],
     examTrapsAndTricks: [
-      "Trap: Forgetting to convert minutes to seconds or Celsius to Kelvin.",
-      "Trick: Eliminate options with incorrect physical units to save time on MCQs!",
-      "Trap: Misreading question keywords (e.g., 'not true' vs 'true')."
+      `⚠️ Trap #1: Forgetting SI unit conversions (e.g. converting minutes to seconds or Celsius to Kelvin).`,
+      `💡 Trick: Use dimensional analysis to eliminate physically impossible options in multiple-choice questions!`,
+      `⚠️ Trap #2: Ignoring boundary conditions or sign conventions (positive vs negative work/direction).`
     ],
     quickRecallChecklist: [
-      "Can you state the primary definition from memory?",
-      "Have you memorized the top 3 SI units and formulas?",
-      "Can you solve 1 sample problem in under 3 minutes?"
+      `Can you state the core definition of ${nTopic} without looking at notes?`,
+      `Do you know the 3 essential formulas and their standard SI units?`,
+      `Can you solve a standard past-paper question on ${nTopic} in under 3 minutes?`
     ],
     createdAt: new Date().toISOString()
   };
