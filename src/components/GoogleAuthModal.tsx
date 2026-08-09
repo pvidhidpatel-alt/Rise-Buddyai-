@@ -21,22 +21,22 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({
 
   const sampleAccounts = [
     {
+      name: 'Patel Vidhi',
+      email: 'Patelvidhi4842@gmail.com',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      badge: 'Account 1',
+    },
+    {
       name: 'Vidhi Patel',
       email: 'p.vidhidpatel@gmail.com',
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
-      badge: 'Primary Account',
-    },
-    {
-      name: 'Vidhi Patel (Student)',
-      email: 'vidhi.study@gmail.com',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-      badge: 'School & Prep',
+      badge: 'Account 2',
     },
     {
       name: 'Vidhi Patel (Academic)',
       email: 'patel.academic@gmail.com',
       avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80',
-      badge: 'Exams & Mock Tests',
+      badge: 'Account 3',
     },
   ];
 

@@ -5,6 +5,9 @@ import { PrimeModal } from './components/PrimeModal';
 import { AIFriendChat } from './components/AIFriendChat';
 import { AIStudyPlanner } from './components/AIStudyPlanner';
 import { AIMotivationCoach } from './components/AIMotivationCoach';
+import { AIQuizGenerator } from './components/AIQuizGenerator';
+import { AIFlashcards } from './components/AIFlashcards';
+import { AIRevisionNotes } from './components/AIRevisionNotes';
 import { QRCodeAccessView } from './components/QRCodeAccessView';
 import { ProfilePrimeView } from './components/ProfilePrimeView';
 import { RenewalBanner } from './components/RenewalBanner';
@@ -56,10 +59,12 @@ export default function App() {
     };
   });
 
-  // Persist User Changes to LocalStorage
+  // Persist User Changes to LocalStorage per-account
   useEffect(() => {
     try {
       localStorage.setItem('rise_buddy_user', JSON.stringify(user));
+      const accountKey = `rise_buddy_user_${(user.email || user.id || 'guest').toLowerCase().trim()}`;
+      localStorage.setItem(accountKey, JSON.stringify(user));
     } catch (e) {
       console.error('Failed to save user to localStorage:', e);
     }
@@ -340,21 +345,111 @@ export default function App() {
     setUser((prev) => ({ ...prev, memoryEnabled: !prev.memoryEnabled }));
   };
 
-  // 8. Select Account from Google Auth Modal
+  // 8. Select Account from Google Auth Modal or Account Switcher
   const handleSelectAccount = (accountData: Partial<UserProfile>) => {
-    setUser((prev) => ({
-      ...prev,
-      ...accountData,
-    }));
+    const targetEmail = (accountData.email || accountData.id || '').toLowerCase().trim();
+    if (targetEmail) {
+      const accountKey = `rise_buddy_user_${targetEmail}`;
+      try {
+        const savedAccount = localStorage.getItem(accountKey);
+        if (savedAccount) {
+          const parsed: UserProfile = JSON.parse(savedAccount);
+          setUser({
+            ...parsed,
+            ...accountData, // Keep fresh name/avatar from selection
+          });
+          return;
+        }
+      } catch (e) {
+        console.error('Error loading account from localStorage:', e);
+      }
+    }
+
+    // Fresh or new account - ALWAYS defaults to free plan requiring separate payment
+    const freshUser: UserProfile = {
+      id: targetEmail || 'user_' + Date.now(),
+      name: accountData.name || targetEmail.split('@')[0] || 'Student',
+      email: targetEmail || accountData.email || '',
+      avatar: accountData.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      plan: 'free',
+      remainingFreeChats: 5,
+      primeExpiryDaysRemaining: 0,
+      memoryEnabled: true,
+      xp: 0,
+      streakDays: 1,
+      examDetails: {
+        examName: 'Upcoming Exams',
+        examDate: '2026-08-30',
+        subjects: ['Mathematics', 'Science', 'English'],
+        weakSubjects: ['Mathematics'],
+        boringSubjects: [],
+        preferredTimeslot: 'Morning',
+      },
+    };
+
+    setUser(freshUser);
+    if (targetEmail) {
+      localStorage.setItem(`rise_buddy_user_${targetEmail}`, JSON.stringify(freshUser));
+    }
   };
 
-  // 9. Prime Upgrade Success
+  // 9. Logout
+  const handleLogout = () => {
+    const guestUser: UserProfile = {
+      id: '',
+      name: 'Guest Student',
+      email: '',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      plan: 'free',
+      remainingFreeChats: 5,
+      primeExpiryDaysRemaining: 0,
+      memoryEnabled: true,
+      xp: 0,
+      streakDays: 1,
+      examDetails: {
+        examName: 'Upcoming Exams',
+        examDate: '2026-08-30',
+        subjects: ['Mathematics', 'Science', 'English'],
+        weakSubjects: ['Mathematics'],
+        boringSubjects: [],
+        preferredTimeslot: 'Morning',
+      },
+    };
+    setUser(guestUser);
+    localStorage.setItem('rise_buddy_user', JSON.stringify(guestUser));
+  };
+
+  // 10. Reset current account plan back to Free (for testing account payments)
+  const handleResetAccountPlan = () => {
+    setUser((prev) => {
+      const updated: UserProfile = {
+        ...prev,
+        plan: 'free',
+        remainingFreeChats: 5,
+        primeExpiryDaysRemaining: 0,
+      };
+      const emailKey = (prev.email || prev.id || 'guest').toLowerCase().trim();
+      if (emailKey) {
+        localStorage.setItem(`rise_buddy_user_${emailKey}`, JSON.stringify(updated));
+      }
+      return updated;
+    });
+  };
+
+  // 11. Prime Upgrade Success
   const handleUpgradeSuccess = () => {
     setUser((prev) => ({
       ...prev,
       plan: 'prime',
       remainingFreeChats: 99999,
-      primeExpiryDaysRemaining: 30,
+      primeExpiryDaysRemaining: 28,
+    }));
+  };
+
+  const handleAddXP = (amount: number) => {
+    setUser((prev) => ({
+      ...prev,
+      xp: (prev.xp || 0) + amount,
     }));
   };
 
@@ -367,14 +462,7 @@ export default function App() {
         user={user}
         onOpenAuth={() => setIsAuthModalOpen(true)}
         onOpenPrimeModal={() => setIsPrimeModalOpen(true)}
-        onLogout={() =>
-          setUser((prev) => ({
-            ...prev,
-            id: '',
-            name: 'Guest User',
-            email: '',
-          }))
-        }
+        onLogout={handleLogout}
       />
 
       {/* Subscription Renewal Reminder Banner */}
@@ -386,7 +474,7 @@ export default function App() {
       )}
 
       {/* Main Active Tab Content */}
-      <main className="flex-1 pb-16 md:pb-6">
+      <main className="flex-1 pb-16 md:pb-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full pt-6">
         {activeTab === 'ai-friend' && (
           <AIFriendChat
             user={user}
@@ -407,6 +495,28 @@ export default function App() {
             onRebalanceSchedule={handleRebalanceSchedule}
             onOpenQRTab={() => setActiveTab('qr-access')}
             isLoading={isPlannerLoading}
+          />
+        )}
+
+        {activeTab === 'ai-quiz' && (
+          <AIQuizGenerator
+            user={user}
+            onAddXP={handleAddXP}
+            onOpenPrimeModal={() => setIsPrimeModalOpen(true)}
+          />
+        )}
+
+        {activeTab === 'ai-flashcards' && (
+          <AIFlashcards
+            user={user}
+            onAddXP={handleAddXP}
+          />
+        )}
+
+        {activeTab === 'ai-notes' && (
+          <AIRevisionNotes
+            user={user}
+            onAddXP={handleAddXP}
           />
         )}
 
@@ -436,15 +546,9 @@ export default function App() {
             onOpenPrimeModal={() => setIsPrimeModalOpen(true)}
             onToggleMemory={handleToggleMemory}
             onOpenAuth={() => setIsAuthModalOpen(true)}
-            onLogout={() =>
-              setUser((prev) => ({
-                ...prev,
-                id: '',
-                name: 'Guest User',
-                email: '',
-              }))
-            }
+            onLogout={handleLogout}
             onRenewPrime={() => setIsPrimeModalOpen(true)}
+            onResetPlan={handleResetAccountPlan}
           />
         )}
       </main>
@@ -461,6 +565,7 @@ export default function App() {
         onClose={() => setIsPrimeModalOpen(false)}
         onUpgradeSuccess={handleUpgradeSuccess}
         isChatLimitReached={user.plan === 'free' && user.remainingFreeChats <= 0}
+        user={user}
       />
     </div>
   );

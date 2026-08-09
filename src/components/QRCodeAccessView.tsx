@@ -13,8 +13,10 @@ import {
   Copy,
   Check,
   Zap,
+  Crown,
 } from 'lucide-react';
 import { TimetableSlot, UserProfile } from '../types';
+import { GooglePayQRCard } from './GooglePayQRCard';
 
 interface QRCodeAccessViewProps {
   user: UserProfile;
@@ -28,6 +30,7 @@ export const QRCodeAccessView: React.FC<QRCodeAccessViewProps> = ({
   onOpenPlanner,
 }) => {
   const [copied, setCopied] = useState(false);
+  const [qrType, setQrType] = useState<'schedule' | 'prime'>('schedule');
 
   // Generate unique schedule URL
   const timetableShareUrl = `${window.location.origin}/timetable?user=${encodeURIComponent(
@@ -74,36 +77,73 @@ export const QRCodeAccessView: React.FC<QRCodeAccessViewProps> = ({
         </div>
       </div>
 
+      {/* Mode Switcher */}
+      <div className="flex items-center gap-2 p-1 bg-slate-200/80 rounded-2xl w-fit">
+        <button
+          onClick={() => setQrType('schedule')}
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+            qrType === 'schedule'
+              ? 'bg-white text-indigo-950 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <QrCode className="w-4 h-4 text-indigo-600" />
+          <span>Timetable QR</span>
+        </button>
+
+        <button
+          onClick={() => setQrType('prime')}
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+            qrType === 'prime'
+              ? 'bg-amber-400 text-slate-950 shadow-sm'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <Crown className="w-4 h-4 fill-slate-950 text-slate-950" />
+          <span>Prime Google Pay QR</span>
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
         {/* QR Code Card */}
-        <div className="md:col-span-5 bg-white rounded-3xl p-6 shadow-lg border border-slate-200/80 text-center flex flex-col items-center justify-center space-y-4">
-          <div className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200 shadow-inner">
-            <QRCodeCanvas value={timetableShareUrl} size={180} level="H" includeMargin />
-          </div>
+        <div className="md:col-span-5">
+          {qrType === 'schedule' ? (
+            <div className="bg-white rounded-3xl p-6 shadow-lg border border-slate-200/80 text-center flex flex-col items-center justify-center space-y-4">
+              <div className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200 shadow-inner">
+                <QRCodeCanvas value={timetableShareUrl} size={180} level="H" includeMargin />
+              </div>
 
-          <div>
-            <h3 className="text-base font-extrabold text-slate-900">Your Timetable QR Code</h3>
-            <p className="text-xs text-slate-500 mt-1">
-              Updates automatically whenever your AI study plan changes.
-            </p>
-          </div>
+              <div>
+                <h3 className="text-base font-extrabold text-slate-900">Your Timetable QR Code</h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  Updates automatically whenever your AI study plan changes.
+                </p>
+              </div>
 
-          <button
-            onClick={handleCopy}
-            className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all flex items-center justify-center gap-2 border border-slate-200"
-          >
-            {copied ? (
-              <>
-                <Check className="w-4 h-4 text-emerald-600" />
-                <span>Link Copied!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="w-4 h-4 text-slate-600" />
-                <span>Copy Schedule Link</span>
-              </>
-            )}
-          </button>
+              <button
+                onClick={handleCopy}
+                className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all flex items-center justify-center gap-2 border border-slate-200"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-4 h-4 text-emerald-600" />
+                    <span>Link Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4 text-slate-600" />
+                    <span>Copy Schedule Link</span>
+                  </>
+                )}
+              </button>
+            </div>
+          ) : (
+            <GooglePayQRCard
+              payeeName="Vidhi Patel"
+              upiId="unicorndreams.com@okicici"
+              amount={149}
+            />
+          )}
         </div>
 
         {/* Live Plan Dashboard View */}

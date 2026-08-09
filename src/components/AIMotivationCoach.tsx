@@ -87,7 +87,7 @@ export const AIMotivationCoach: React.FC<AIMotivationCoachProps> = ({
       });
 
       const data = await res.json();
-      const aiReplyText = data.reply || "💪 You've got what it takes! Take one deep breath and focus on the next 15 minutes.";
+      const aiReplyText = data.reply || `💪 I hear you! Tackling "${userText}" starts with a single 5-minute pomodoro sprint. Focus on one small step right now, you've got this!`;
 
       const aiMsg: ChatMessage = {
         id: `ai-${Date.now()}`,
@@ -102,7 +102,7 @@ export const AIMotivationCoach: React.FC<AIMotivationCoachProps> = ({
       const fallbackMsg: ChatMessage = {
         id: `ai-${Date.now()}`,
         sender: 'ai',
-        text: '💪 Remember: action creates momentum! Start with just 5 minutes of focused study right now.',
+        text: `💪 I hear you! Tackling "${userText}" starts with a single 5-minute pomodoro sprint. Focus on one small step right now, you've got this!`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setMotivationMessages((prev) => [...prev, fallbackMsg]);

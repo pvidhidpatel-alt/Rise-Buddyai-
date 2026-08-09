@@ -26,6 +26,7 @@ interface ProfilePrimeViewProps {
   onOpenAuth: () => void;
   onLogout: () => void;
   onRenewPrime: () => void;
+  onResetPlan?: () => void;
 }
 
 export const ProfilePrimeView: React.FC<ProfilePrimeViewProps> = ({
@@ -35,6 +36,7 @@ export const ProfilePrimeView: React.FC<ProfilePrimeViewProps> = ({
   onOpenAuth,
   onLogout,
   onRenewPrime,
+  onResetPlan,
 }) => {
   const isPrime = user.plan === 'prime';
 
@@ -98,6 +100,27 @@ export const ProfilePrimeView: React.FC<ProfilePrimeViewProps> = ({
                 Logout
               </button>
             )}
+            {onResetPlan && (
+              <button
+                onClick={onResetPlan}
+                className="px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-extrabold text-xs rounded-xl border border-rose-200 transition-colors flex items-center gap-1.5"
+                title="Reset this account back to Free Plan to test new account payment flow"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                Reset Plan to Free
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Account Info Notice Banner */}
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200/80 flex items-start gap-3">
+          <Sparkles className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="text-xs text-amber-950 space-y-1">
+            <p className="font-extrabold">Account-Based Prime Subscription Policy</p>
+            <p className="leading-relaxed font-medium">
+              Prime activations are tied to your specific Google Account (<strong className="underline">{user.email || 'active account'}</strong>). When you sign up or switch to a different account, each account requires its own separate 28-day Prime payment via Google Pay QR or UPI ID (<strong className="font-mono bg-amber-100 px-1 py-0.5 rounded">unicorndreams.com@okicici</strong>).
+            </p>
           </div>
         </div>
 
@@ -106,23 +129,43 @@ export const ProfilePrimeView: React.FC<ProfilePrimeViewProps> = ({
           <h3 className="text-sm font-black text-slate-400 uppercase tracking-wider">Subscription & Plan Status</h3>
 
           {isPrime ? (
-            <div className="p-6 rounded-3xl bg-gradient-to-br from-amber-500 via-amber-600 to-indigo-700 text-white shadow-xl space-y-4">
+            <div className="p-6 rounded-3xl bg-gradient-to-br from-amber-500 via-amber-600 to-indigo-700 text-white shadow-xl space-y-5">
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 bg-black/20 rounded-full text-xs font-black uppercase tracking-wider text-amber-200 flex items-center gap-1.5">
                   <Crown className="w-4 h-4 fill-amber-200" /> RiseBuddy Prime Active
                 </span>
-                <span className="text-xs font-bold text-amber-100">₹149 / Month</span>
+                <span className="text-xs font-bold text-amber-100">₹149 / 28 Days Pass</span>
               </div>
 
               <div className="space-y-1">
-                <h4 className="text-xl font-black">Unlimited Access Activated!</h4>
-                <p className="text-xs text-amber-100/90">
-                  Enjoy unlimited AI Friend chats, AI Study Planner updates, Motivation Coaching & Long-term AI Memory.
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h4 className="text-xl font-black">Unlimited Access Activated!</h4>
+                  <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-md bg-amber-400 text-slate-950">
+                    28 Days Active
+                  </span>
+                </div>
+                <p className="text-xs text-amber-100/90 leading-relaxed">
+                  Active account: <strong className="text-white underline">{user.email}</strong>. Enjoy unlimited AI chats, study planners, & long-term memory for {user.primeExpiryDaysRemaining ?? 28} days.
                 </p>
               </div>
 
+              {/* QR Code & UPI ID Card Reference even when Prime */}
+              <div className="pt-2 border-t border-white/20 space-y-3">
+                <p className="text-xs font-extrabold text-amber-200 flex items-center gap-1.5">
+                  <CreditCard className="w-4 h-4 text-amber-300" />
+                  <span>Google Pay QR & UPI ID Reference (unicorndreams.com@okicici):</span>
+                </p>
+                <div className="bg-slate-950/90 rounded-2xl p-4 border border-white/10 text-slate-100">
+                  <GooglePayQRCard
+                    payeeName="Vidhi Patel"
+                    upiId="unicorndreams.com@okicici"
+                    amount={149}
+                  />
+                </div>
+              </div>
+
               {/* Renewal Notice if within renewal window */}
-              {user.primeExpiryDaysRemaining && user.primeExpiryDaysRemaining <= 3 && (
+              {user.primeExpiryDaysRemaining && user.primeExpiryDaysRemaining <= 5 && (
                 <div className="p-3.5 rounded-2xl bg-black/30 border border-white/20 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-xs font-bold text-amber-200">
                     <Clock className="w-4 h-4 animate-spin" style={{ animationDuration: '6s' }} />
@@ -147,16 +190,16 @@ export const ProfilePrimeView: React.FC<ProfilePrimeViewProps> = ({
               </div>
 
               <div className="space-y-1">
-                <h4 className="text-2xl font-black tracking-tight">Unlock RiseBuddy Prime — ₹149/month</h4>
-                <p className="text-xs text-indigo-200">
-                  Free plan gives <strong>5 chats per day</strong>. Upgrade to Prime to remove chat limits, enable AI memory & unlock full coaching!
+                <h4 className="text-2xl font-black tracking-tight">Unlock RiseBuddy Prime — ₹149 / 28 Days</h4>
+                <p className="text-xs text-indigo-200 leading-relaxed">
+                  Free plan gives <strong>5 chats per day</strong> for <strong className="text-white underline">{user.email || 'this account'}</strong>. Scan the Google Pay QR or pay via UPI ID (<code className="text-amber-300 bg-indigo-900 px-1 py-0.5 rounded">unicorndreams.com@okicici</code>) to activate 28 days of unlimited access!
                 </p>
               </div>
 
-              {/* Arranged Google Pay QR Payment Card */}
+              {/* Google Pay QR Payment Card */}
               <div className="space-y-2">
                 <p className="text-xs font-black uppercase tracking-wider text-indigo-300">
-                  Scan Google Pay QR to Upgrade Directly:
+                  Scan Google Pay QR Code to Pay ₹149:
                 </p>
                 <GooglePayQRCard
                   payeeName="Vidhi Patel"
@@ -171,7 +214,7 @@ export const ProfilePrimeView: React.FC<ProfilePrimeViewProps> = ({
                 className="w-full py-3.5 rounded-2xl bg-white text-indigo-950 font-black text-sm shadow-md hover:bg-indigo-50 transition-all flex items-center justify-center gap-2"
               >
                 <Crown className="w-5 h-5 fill-indigo-950" />
-                <span>👑 Confirm & Upgrade to Prime</span>
+                <span>👑 Confirm Payment & Activate 28 Days Prime</span>
               </button>
             </div>
           )}

@@ -11,6 +11,9 @@ import {
   Clock,
   ShieldCheck,
   Zap,
+  Target,
+  Layers,
+  FileText,
 } from 'lucide-react';
 import { TabType, UserProfile } from '../types';
 import { RiseBuddyLogo } from './RiseBuddyLogo';
@@ -72,19 +75,55 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setActiveTab('study-planner')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
                 activeTab === 'study-planner'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
                   : 'text-slate-600 hover:text-indigo-950 hover:bg-white/60'
               }`}
             >
               <Calendar className="w-4 h-4" />
-              <span>Study Planner</span>
+              <span>Planner</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('ai-quiz')}
+              className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
+                activeTab === 'ai-quiz'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                  : 'text-slate-600 hover:text-indigo-950 hover:bg-white/60'
+              }`}
+            >
+              <Target className="w-4 h-4 text-purple-500" />
+              <span>AI Quiz</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('ai-flashcards')}
+              className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
+                activeTab === 'ai-flashcards'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                  : 'text-slate-600 hover:text-indigo-950 hover:bg-white/60'
+              }`}
+            >
+              <Layers className="w-4 h-4 text-emerald-500" />
+              <span>Flashcards</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('ai-notes')}
+              className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
+                activeTab === 'ai-notes'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                  : 'text-slate-600 hover:text-indigo-950 hover:bg-white/60'
+              }`}
+            >
+              <FileText className="w-4 h-4 text-blue-500" />
+              <span>Notes</span>
             </button>
 
             <button
               onClick={() => setActiveTab('motivation-coach')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
                 activeTab === 'motivation-coach'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
                   : 'text-slate-600 hover:text-indigo-950 hover:bg-white/60'
@@ -96,14 +135,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setActiveTab('qr-access')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
                 activeTab === 'qr-access'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
                   : 'text-slate-600 hover:text-indigo-950 hover:bg-white/60'
               }`}
             >
               <QrCode className="w-4 h-4" />
-              <span>QR Access</span>
+              <span>QR Plan</span>
             </button>
           </nav>
 
@@ -182,44 +221,74 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Mobile Bottom Navigation Bar */}
-      <div className="md:hidden flex items-center justify-around bg-white border-t border-slate-200/80 p-2">
+      <div className="md:hidden flex items-center justify-around bg-white border-t border-slate-200/80 p-1.5 overflow-x-auto">
         <button
           onClick={() => setActiveTab('ai-friend')}
-          className={`flex flex-col items-center gap-0.5 p-2 rounded-xl text-[11px] font-bold ${
+          className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl text-[10px] font-extrabold shrink-0 ${
             activeTab === 'ai-friend' ? 'text-indigo-600' : 'text-slate-500'
           }`}
         >
-          <MessageSquare className="w-5 h-5" />
+          <MessageSquare className="w-4 h-4" />
           <span>AI Friend</span>
         </button>
 
         <button
           onClick={() => setActiveTab('study-planner')}
-          className={`flex flex-col items-center gap-0.5 p-2 rounded-xl text-[11px] font-bold ${
+          className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl text-[10px] font-extrabold shrink-0 ${
             activeTab === 'study-planner' ? 'text-indigo-600' : 'text-slate-500'
           }`}
         >
-          <Calendar className="w-5 h-5" />
+          <Calendar className="w-4 h-4" />
           <span>Planner</span>
         </button>
 
         <button
+          onClick={() => setActiveTab('ai-quiz')}
+          className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl text-[10px] font-extrabold shrink-0 ${
+            activeTab === 'ai-quiz' ? 'text-indigo-600' : 'text-slate-500'
+          }`}
+        >
+          <Target className="w-4 h-4 text-purple-600" />
+          <span>Quiz</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('ai-flashcards')}
+          className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl text-[10px] font-extrabold shrink-0 ${
+            activeTab === 'ai-flashcards' ? 'text-indigo-600' : 'text-slate-500'
+          }`}
+        >
+          <Layers className="w-4 h-4 text-emerald-600" />
+          <span>Flashcards</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('ai-notes')}
+          className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl text-[10px] font-extrabold shrink-0 ${
+            activeTab === 'ai-notes' ? 'text-indigo-600' : 'text-slate-500'
+          }`}
+        >
+          <FileText className="w-4 h-4 text-blue-600" />
+          <span>Notes</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('motivation-coach')}
-          className={`flex flex-col items-center gap-0.5 p-2 rounded-xl text-[11px] font-bold ${
+          className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl text-[10px] font-extrabold shrink-0 ${
             activeTab === 'motivation-coach' ? 'text-indigo-600' : 'text-slate-500'
           }`}
         >
-          <Flame className="w-5 h-5" />
+          <Flame className="w-4 h-4 text-amber-500" />
           <span>Coach</span>
         </button>
 
         <button
           onClick={() => setActiveTab('qr-access')}
-          className={`flex flex-col items-center gap-0.5 p-2 rounded-xl text-[11px] font-bold ${
+          className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl text-[10px] font-extrabold shrink-0 ${
             activeTab === 'qr-access' ? 'text-indigo-600' : 'text-slate-500'
           }`}
         >
-          <QrCode className="w-5 h-5" />
+          <QrCode className="w-4 h-4" />
           <span>QR Plan</span>
         </button>
       </div>

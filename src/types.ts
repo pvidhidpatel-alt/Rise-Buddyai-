@@ -1,4 +1,12 @@
-export type TabType = 'ai-friend' | 'study-planner' | 'motivation-coach' | 'qr-access' | 'profile-prime';
+export type TabType =
+  | 'ai-friend'
+  | 'study-planner'
+  | 'motivation-coach'
+  | 'ai-quiz'
+  | 'ai-flashcards'
+  | 'ai-notes'
+  | 'qr-access'
+  | 'profile-prime';
 
 export type UserPlan = 'free' | 'prime';
 
@@ -59,3 +67,56 @@ export interface DailyHabit {
   category: string;
   completed: boolean;
 }
+
+// AI Quiz Types
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswerIndex: number;
+  explanation: string;
+}
+
+export interface QuizDeck {
+  id: string;
+  title: string;
+  subject: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  questions: QuizQuestion[];
+  createdAt: string;
+}
+
+// AI Flashcard Types
+export interface Flashcard {
+  id: string;
+  front: string; // Question, term or prompt
+  back: string;  // Answer, definition or formula
+  mnemonic?: string;
+}
+
+export interface FlashcardDeck {
+  id: string;
+  title: string;
+  subject: string;
+  cards: Flashcard[];
+  createdAt: string;
+}
+
+// AI Revision Notes Types
+export interface RevisionNoteSection {
+  title: string;
+  points: string[];
+}
+
+export interface RevisionNote {
+  id: string;
+  title: string;
+  subject: string;
+  summary: string;
+  keyConcepts: RevisionNoteSection[];
+  keyFormulasOrDefinitions?: string[];
+  examTrapsAndTricks?: string[];
+  quickRecallChecklist: string[];
+  createdAt: string;
+}
+
